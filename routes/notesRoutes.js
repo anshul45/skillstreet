@@ -10,8 +10,8 @@ import tokenMiddleware from "../middleware/tokenMiddleware.js";
 
 const notesRouter = express.Router();
 
-notesRouter.get("/allnotes", getAllNotes);
-notesRouter.get("/singlenote", getSingleNote);
+notesRouter.get("/allnotes", tokenMiddleware, getAllNotes);
+notesRouter.get("/singlenote", tokenMiddleware, getSingleNote);
 notesRouter.post("/addnote", tokenMiddleware, addNote);
 notesRouter.put("/updatenote", tokenMiddleware, updateNote);
 notesRouter.delete("/deletenote", tokenMiddleware, deleteNote);

@@ -47,20 +47,23 @@ export const addNote = async (req, res) => {
 // Function to get all notes
 export const getAllNotes = async (req, res) => {
   try {
-    // Fetching all notes from the database
-    const response = await Note.find();
+    // Fetching user id from the request
+    const user = req.user.id;
 
-    if (response.length === 0) {
+    // Fetching notes that belong to the specific user
+    const userNotes = await Note.find({ user });
+
+    if (userNotes.length === 0) {
       return res.status(404).json({
-        message: "Sorry, no data found",
+        message: "No notes found for this user",
       });
     }
 
-    return res.status(200).json(response);
+    return res.status(200).json(userNotes);
   } catch (error) {
     return res
       .status(500)
-      .json({ message: "Error retrieving notes: " + error.message });
+      .json({ message: "Error retrieving user's notes: " + error.message });
   }
 };
 
@@ -73,13 +76,16 @@ export const getSingleNote = async (req, res) => {
       return res.status(400).json({ message: "id not provided." });
     }
 
-    // Fetching a single note by ID from the database
-    const response = await Note.findById(id);
+    // Fetching user ID from the request
+    const user = req.user.id;
+
+    // Fetching a single note by ID and user ID from the database
+    const response = await Note.findOne({ _id: id, user });
 
     if (!response) {
       return res.status(404).json({
         message:
-          "Sorry, no data found for this id. Please check for another one.",
+          "Sorry, no data found for this id associated with this user. Please check for another one.",
       });
     }
 
